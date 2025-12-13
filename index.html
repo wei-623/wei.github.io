@@ -192,7 +192,7 @@
         .map-section h3 { color: #555; margin-bottom: 20px; font-size: 1.4em; }
         body.dark-mode .map-section h3 { color: #ddd; }
         
-        /* 🌟 地圖佈局調整：每行 4 個圖表 */
+        /* 🌟 地圖佈局調整：每行 4 個圖表 (桌面) */
         .maps-wrapper {  
             display: grid;  
             grid-template-columns: repeat(4, minmax(200px, 1fr)); 
@@ -201,18 +201,16 @@
             margin: 0 auto;
         }
         
-        /* 針對窄螢幕/手機 (小於 1000px 時觸發) */
-        @media (max-width: 1000px) {
-            .maps-wrapper {
-                /* 中型設備: 每行 3 個圖表 */
-                grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));  
-            }
-        }
-
-        /* 針對更窄螢幕/手機 (小於 800px 時確保每行不超過 2 個) */
+        /* 針對手機 (小於 800px 時切換為 2 欄) */
         @media (max-width: 800px) {
             .maps-wrapper {
-                grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));  
+                grid-template-columns: repeat(2, minmax(150px, 1fr));  
+            }
+        }
+        /* 針對更窄的手機 (小於 500px 時切換為 1 欄, 可選) */
+        @media (max-width: 500px) {
+            .maps-wrapper {
+                grid-template-columns: 1fr; 
             }
         }
         
@@ -395,7 +393,6 @@
             "金門縣": {lat: 24.3293, lon: 118.3204}, "連江縣": {lat: 26.1512, lon: 119.9288}
         };
 
-        // 靜態地圖數據 URL，用於刷新地圖圖像
         const sampleDetailedRainMapData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg" } } } };
         const sampleInfraredMapData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg" } } } };
         const sampleEnhancedInfraredMapData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg" } } } }; 
