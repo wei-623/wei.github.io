@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>智慧天氣萬能曆</title>
+    <title>智慧天氣萬能曆 (Pro)</title>
     
     <meta name="theme-color" content="#0984e3">
     <meta name="apple-mobile-web-app-capable" content="yes">
     
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJpY29ucyI6W3sic2l6ZXMiOiIxOTJ4MTkyIiwic3JjIjoiYXBwLWljb24tNTEyeDUxMi5wbmciLCJ0eXBlIjoiaW1hZ2UvcG5nIn0seyJzaXplcyI6IjUxMng1MTIiLCJzcmMiOiJhcHAtaWNvbi01MTJ4NTEyLnBuZyIsInR5cGUiOiJpbWFnZS9wbmcifV0sImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJuYW1lIjoi5pZ6aF5aSp5rCj6JCs6IO95puGIiwic2hvcnRfbmFtZSI6IuaZuua1jOWkqeawoyIsInN0YXJ0X3VybCI6Ii4iLCJ0aGVtZV9jb2xvciI6IiMwOTg0ZTMifQ==">
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJpY29ucyI6W3sic2l6ZXMiOiIxOTJ4MTkyIiwic3JjIjoiYXBwLWljb24tNTEyeDUxMi5wbmciLCJ0eXBlIjoiaW1hZ2UvcG5nIn0seyJzaXplcyI6IjUxMng1MTIiLCJzcmMiOiJhcHAtaWNvbi01MTJ4NTEyLnBuZyIsInR5cGUiOiJpbWFnZS9wbmcifV0sImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJuYW1lIjoi5pZ6aF5aSp5rCj6JCs6IO95puGIiwic2hvcnRfbmFtZSI6Iuaizuua1jOWkqeawoyIsInN0YXJ0X3VybCI6Ii4iLCJ0aGVtZV9jb2xvciI6IiMwOTg0ZTMifQ==">
 
     <style>
         :root {
@@ -24,6 +23,11 @@
             --text-main-dark: #fff;
             --container-bg-light: rgba(255, 255, 255, 0.95);
             --container-bg-dark: rgba(0, 0, 0, 0.6);
+            --pin-color: #ff7675; 
+            /* 🌟 新增顏色變數 */
+            --severe-color: #d63031;
+            --warning-color: #fdcb6e;
+            --info-color: #0984e3;
         }
 
         body {
@@ -40,92 +44,39 @@
             overflow-x: hidden;
         }
 
-        /* 🚨 警報橫幅 (內嵌於容器內) */
-        #alert-marquee {
-            width: 95%; 
-            margin: 10px auto 20px auto; 
-            background-color: #d63031;  
-            color: white;  
-            font-weight: bold;  
-            z-index: 999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);  
-            display: none;  
-            overflow: hidden;  
-            font-size: 1.1em;  
-            cursor: pointer;  
-            transition: all 0.2s;
-            text-align: center;
-            border-radius: 10px;
+        /* Dark Mode Settings */
+        body.dark-mode { 
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e) !important; 
+            color: var(--text-main-dark); 
         }
-        
-        .alert-summary {  
-            padding: 10px 15px;  
-            line-height: 1.4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        body.dark-mode .container { 
+            background: var(--container-bg-dark); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8); 
         }
-
-        /* 警報詳情區塊 */
-        #alertDetails {
-            display: none;  
-            padding: 15px 20px;
-            background-color: rgba(0,0,0,0.2);
-            backdrop-filter: blur(5px);
-            max-height: 300px;
-            overflow-y: auto;
-            text-align: left;
-            border-top: 1px solid rgba(255,255,255,0.3);
-            font-size: 0.9em;
-        }
-        
-        /* 警報分級背景色 */
-        .alert-bg-warning { background-color: #f39c12 !important; } 
-        .alert-bg-severe { background-color: #e74c3c !important; }  
-        .alert-bg-info { background-color: #3498db !important; }    
-        .alert-bg-default { background-color: #d63031 !important; } 
-        
-        /* 詳情列表項目 */
-        .alert-item {
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed rgba(255,255,255,0.2);
-        }
-        .alert-item-title {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #ffeb3b; 
-            margin-bottom: 5px;
-            display: block;
-        }
-        .alert-item-content {
-            font-size: 0.9em;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-
-
-        body.dark-mode { background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e) !important; color: var(--text-main-dark); }
-        body.dark-mode::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0));
-            background-repeat: repeat; background-size: 200px 200px; z-index: -1; opacity: 0.8;
-            animation: starsMove 100s linear infinite;
-        }
-        @keyframes starsMove { from { background-position: 0 0; } to { background-position: 1000px 500px; } }
 
         .container {
             background: var(--container-bg-light); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); text-align: center; max-width: 1100px; width: 100%; min-height: 600px; transition: background 0.5s ease;
         }
-        body.dark-mode .container { background: var(--container-bg-dark); box-shadow: 0 15px 35px rgba(0,0,0,0.8); }
+        
+        /* 🌟 載入與骨架屏優化 */
+        #loader { display: none; margin: 20px auto; width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--main-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* 簡易骨架屏樣式 */
+        .skeleton-card { background: #f0f0f0; border-radius: 15px; height: 250px; width: 240px; animation: pulse-bg 1.5s infinite alternate; }
+        body.dark-mode .skeleton-card { background: #333; }
+        @keyframes pulse-bg { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        h2 { margin-top: 0; margin-bottom: 5px;}
+
+        /* Clock & Controls */
         .clock-area { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.1); }
         body.dark-mode .clock-area { border-bottom: 1px solid rgba(255,255,255,0.2); }
         .greeting { font-size: 1.2em; color: var(--main-color); font-weight: bold; margin-bottom: 5px; }
         body.dark-mode .greeting { color: #74b9ff; }
         .real-time-clock { font-size: 2.8em; font-weight: bold; font-family: monospace; letter-spacing: 2px; margin: 10px 0;}
+        .updated-time { font-size: 0.85em; color: #666; margin-top: 5px; } /* 🌟 新增更新時間 */
+        body.dark-mode .updated-time { color: #ccc; }
         
+        /* 跨年倒數 UI 樣式 */
         .countdown-text {  
             font-size: 1.1em;  
             color: #e17055;  
@@ -138,7 +89,7 @@
             white-space: nowrap;  
         }
         body.dark-mode .countdown-text { color: #ff7675; background: rgba(255, 118, 117, 0.2); }
-
+        
         .astro-info { display: flex; justify-content: center; gap: 20px; font-size: 0.95em; color: #666; margin-top: 10px; flex-wrap: wrap; }
         body.dark-mode .astro-info { color: #b2bec3; }
 
@@ -153,7 +104,13 @@
         .btn-mode { background-color: #636e72; color: white; border: none; font-weight: bold; }
         
         /* 🟢 主題色選擇器 */
-        .theme-selector { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px;}
+        .theme-selector { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+            margin-top: 10px;
+        }
         .color-btn {  
             width: 25px; height: 25px; border-radius: 50%;  
             border: 2px solid transparent;  
@@ -171,9 +128,11 @@
             transform: scale(1.1);  
         }  
         body.dark-mode .color-btn.active {  
-            box-shadow: 0 0 0 33, 0 0 0 5px var(--main-color);  
+            box-shadow: 0 0 0 3px #222, 0 0 0 5px var(--main-color);  
         }
 
+
+        /* Forecast Cards */
         #forecast-container { display: flex; justify-content: center; flex-wrap: wrap; gap: 20px; min-height: 200px; }
         .weather-card {
             background: var(--card-bg-light); padding: 20px; border-radius: 15px; width: 240px;
@@ -181,68 +140,201 @@
             transition: transform 0.2s; color: var(--text-main-light);
             display: flex; flex-direction: column; align-items: center; animation: fadeIn .5s ease-out;
         }
-
-        .ci-text { font-size: .9em; color: #fff; margin: 8px 0; background: #b2bec3; padding: 6px 15px; border-radius: 20px; font-weight: bold; width: 90%; }
         .temp-range { color: #e17055; font-weight: bold; font-size: 1.3em; margin-top: 5px;}
+        
+        /* 🌟 舒適度條樣式 */
+        .ci-text { 
+            font-size: .9em; 
+            color: #fff; 
+            margin: 8px 0; 
+            background: #b2bec3; 
+            padding: 6px 15px; 
+            min-height: 38px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px; 
+            font-weight: bold; 
+            width: 90%; 
+            line-height: 1.2; 
+        }
         .rain { color: var(--main-color); font-weight: bold; margin-top: 8px; font-size: .95em;}
+        /* 🌟 新增濕度/體感溫度樣式 */
+        .details-row { font-size: 0.85em; color: #666; margin-top: 5px; }
+        body.dark-mode .details-row { color: #ccc; }
 
 
+        /* 🚨 氣象特報 Marquee 樣式 */
+        #alert-marquee { 
+            width: 95%; 
+            margin: 10px auto 20px auto; 
+            background-color: var(--severe-color); /* 使用變數 */
+            color: white; 
+            font-weight: bold; 
+            z-index: 999; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            display: none; 
+            overflow: hidden; 
+            font-size: 1.1em; 
+            cursor: pointer; 
+            transition: all 0.2s; 
+            text-align: center; 
+            border-radius: 10px; 
+        }
+        .alert-summary { padding: 10px 15px; line-height: 1.4; display: flex; justify-content: center; align-items: center; }
+        #alertDetails { display: none; padding: 15px 20px; background-color: rgba(0,0,0,0.2); backdrop-filter: blur(5px); max-height: 300px; overflow-y: auto; text-align: left; font-size: 0.9em; }
+        .typhoon-link { display: block; background: rgba(255, 255, 255, 0.2); padding: 5px; margin-top: 10px; border-radius: 5px; text-decoration: none; color: #ffeb3b; } /* 🌟 颱風連結樣式 */
+
+
+        /* ---------------------------------- */
+        /* 🌟 地震警報區塊樣式 (最終優化版 - 貼合 Marquee 尺寸) 🌟 */
+        /* ---------------------------------- */
+        #earthquake-alert {
+            display: none; /* 預設隱藏 */
+            width: 95%;
+            margin: 10px auto 20px auto; 
+            padding: 10px 15px; /* 與 Marquee 保持接近的垂直尺寸 */
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.4);
+            font-weight: bold;
+            text-align: left;
+            animation: pulse 1.5s infinite;
+            /* 🌟 確保在 RWD 下有最小高度，與 alert-marquee 視覺高度一致 */
+            min-height: 40px; 
+        }
+
+        /* 診斷訊息專用樣式 */
+        #earthquake-alert.diag {
+            background: #2c3e50;
+            color: #ffeb3b;
+            animation: none;
+        }
+
+        /* 恢復閃爍動畫效果 */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(192, 57, 43, 0.5); }
+            50% { transform: scale(1.005); box-shadow: 0 0 18px rgba(192, 57, 43, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 15px rgba(192, 57, 43, 0.5); }
+        }
+
+        #earthquake-alert h4 {
+            margin: 0; 
+            font-size: 1.1em; /* 保持與 Marquee 摘要字體接近 */
+            color: #ffeb3b; 
+            display: inline; 
+            margin-right: 10px;
+            white-space: nowrap; /* 🌟 確保標題不換行 */
+        }
+
+        .earthquake-detail {
+            font-size: 1em; 
+            line-height: 1.4; 
+            display: flex;
+            align-items: center; 
+        }
+        .earthquake-magnitude {
+            font-size: 1.8em; /* 震級 MXX 視覺突出 */
+            color: #fff;
+            margin-right: 15px; 
+            display: inline-block;
+            line-height: 1.1; /* 調整行高讓數字居中 */
+        }
+        /* 佈局容器 */
+        #earthquake-details > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; 
+            width: 100%;
+        }
+        #earthquake-details > div > div {
+            font-size: 0.9em; 
+            line-height: 1.2;
+            margin-right: 8px; 
+        }
+        /* 針對手機版面，讓內容可以垂直堆疊 */
+        @media (max-width: 500px) {
+             #earthquake-details > div {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .earthquake-magnitude {
+                margin-bottom: 5px;
+            }
+            #earthquake-details > div > div {
+                text-align: left;
+                margin-left: 0;
+            }
+        }
+        /* ---------------------------------- */
+
+        /* Maps Section and Grid Layout */
         .map-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,.1); text-align: center; }
         body.dark-mode .map-section { border-top: 1px solid rgba(255,255,255,.1); }
-        .map-section h3 { color: #555; margin-bottom: 20px; font-size: 1.4em; }
-        body.dark-mode .map-section h3 { color: #ddd; }
-        
-        /* 🌟 地圖佈局調整：每行 4 個圖表 (桌面) */
-        .maps-wrapper {  
+        #maps-wrapper {  
             display: grid;  
             grid-template-columns: repeat(4, minmax(200px, 1fr)); 
             justify-content: center;  
             gap: 20px;  
             margin: 0 auto;
+            /* 🌟 RWD 優化：行動版地圖可橫向滾動 */
+            overflow-x: auto;
+            padding-bottom: 10px;
+            white-space: nowrap;
         }
-        
-        /* 針對手機 (小於 800px 時切換為 2 欄) */
+        /* 確保行動版地圖在 flex/grid 下能保持尺寸，方便滑動 */
+        .map-box { 
+            position: relative; 
+            min-width: 220px; 
+            display: inline-block; 
+            white-space: normal;
+        }
+        /* 🌟 RWD 優化：小螢幕變為兩欄 */
         @media (max-width: 800px) {
-            .maps-wrapper {
-                grid-template-columns: repeat(2, minmax(150px, 1fr));  
-            }
-        }
-        /* 針對更窄的手機 (小於 500px 時切換為 1 欄, 可選) */
-        @media (max-width: 500px) {
-            .maps-wrapper {
-                grid-template-columns: 1fr; 
+             #maps-wrapper {
+                display: flex; /* 切換為 flex 以啟用水平滾動 */
+                flex-wrap: nowrap;
             }
         }
         
+        .map-box.pinned {
+            border: 3px solid var(--pin-color) !important;
+            box-shadow: 0 0 15px rgba(255, 118, 117, 0.5);
+        }
+        .pin-icon {
+            position: absolute; top: 10px; right: 10px; font-size: 1.2em; cursor: pointer;
+            color: #ccc; transition: color 0.2s; background: rgba(255, 255, 255, 0.5);
+            padding: 3px 5px; border-radius: 5px; line-height: 1; z-index: 5;
+        }
+        .map-box.pinned .pin-icon { color: var(--pin-color); background: rgba(255, 255, 255, 0.9); }
+        body.dark-mode .pin-icon { background: rgba(0, 0, 0, 0.5); }
+        body.dark-mode .map-box.pinned .pin-icon { background: rgba(0, 0, 0, 0.8); }
+
         .map-box {  
             max-width: 400px;  
-            background: #fff;  
-            padding: 15px;  
-            border-radius: 15px;  
-            box-shadow: 0 5px 15px rgba(0,0,0,.1);  
-            width: 100%;
+            background: var(--card-bg-light); padding: 15px; border-radius: 15px;  
+            box-shadow: 0 5px 15px rgba(0,0,0,.1); width: 100%;
         }
-        
-        body.dark-mode .map-box { background: rgba(255,255,255,.1); }
         .map-box h4 { margin: 0 0 10px 0; color: var(--main-color); }
-        img.map-img { width: 100%; height: auto; border-radius: 10px; display: block; }
+        img.map-img { width: 100%; height: auto; border-radius: 10px; display: block; cursor: pointer; } /* 🌟 增加放大預覽的 cursor */
 
-        .link-btn {
-            color: #fff !important;  
-            background-color: var(--main-color);
-            padding: 5px 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
+        .footer-note { margin-top: 30px; }
+
+        /* 🌟 Modal 樣式 */
+        #featuresModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;
         }
-
-        .footer-note {  
-            margin-top: 30px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,.1);  
-            font-size: .85em; color: #666; line-height: 1.6;
+        .modal-content {
+            background: var(--card-bg-light); padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; text-align: left; position: relative;
         }
-        body.dark-mode .footer-note { color: #aaa; border-top-color: rgba(255,255,255,.1); }
-
+        body.dark-mode .modal-content { background: #2d3436; color: var(--text-main-dark); }
+        .modal-content h3 { margin-top: 0; color: var(--main-color); border-bottom: 2px solid var(--main-color); padding-bottom: 10px; }
+        .modal-content ul { padding-left: 20px; list-style-type: disc; }
+        .close-btn { position: absolute; top: 10px; right: 20px; font-size: 24px; cursor: pointer; color: #666; }
+        body.dark-mode .close-btn { color: #ccc; }
     </style>
 </head>
 <body>
@@ -256,12 +348,16 @@
                 </div>
         </div>
         
+        <div id="earthquake-alert" style="display: none;">
+            <div id="earthquake-details" class="earthquake-detail">
+                讀取中...
+            </div>
+        </div>
         <div class="clock-area">
             <div class="greeting" id="greetingText">Loading...</div>
             <div class="real-time-clock" id="liveClock">00:00:00</div>
             <div id="liveDate">--</div>
-            
-            <div id="countdown" class="countdown-text">計算中...</div>
+            <div id="updatedTime" class="updated-time"></div> <div id="countdown" class="countdown-text">計算中...</div>
 
             <div class="astro-info">
                 <span id="lunarDate">🌝 農曆...</span> 
@@ -269,7 +365,7 @@
         </div>
         
         <div class="controls">
-            <select id="citySelect" onchange="saveLocation()">
+            <select id="citySelect" onchange="getWeather(citySelect.value)">
                 <option value="宜蘭縣">宜蘭縣</option><option value="臺北市" selected>臺北市</option>
                 <option value="新北市">新北市</option><option value="桃園市">桃園市</option>
                 <option value="臺中市">臺中市</option><option value="臺南市">臺南市</option>
@@ -282,11 +378,10 @@
                 <option value="臺東縣">臺東縣</option><option value="澎湖縣">澎湖縣</option>
                 <option value="金門縣">金門縣</option><option value="連江縣">連江縣</option>
             </select>
-            <button class="btn-query" onclick="getWeather()">🔄 查詢</button>
+            <button class="btn-query" onclick="getWeather(citySelect.value)">🔄 查詢</button>
             <button class="btn-copy" onclick="copyWeather()">📋 複製</button>
             <button class="btn-mode" onclick="toggleTheme(this)" id="btnMode">🌙 夜間</button>
-            
-            <div class="theme-selector" id="themeSelector">
+            <button class="btn-mode" onclick="openFeaturesModal()">ℹ️ 網站功能</button> <div class="theme-selector" id="themeSelector">
                 <div class="color-btn theme-blue active" data-color="#0984e3" data-gradient="linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)" onclick="toggleTheme(this)"></div>
                 <div class="color-btn theme-green" data-color="#00b894" data-gradient="linear-gradient(135deg, #55efc4 0%, #00b894 100%)" onclick="toggleTheme(this)"></div>
                 <div class="color-btn theme-purple" data-color="#6c5ce7" data-gradient="linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)" onclick="toggleTheme(this)"></div>
@@ -295,72 +390,105 @@
         </div>
         
         <div class="loader" id="loader"></div>
-        <div id="forecast-container"></div> 
+        <div id="forecast-container">
+             <div class="skeleton-card"></div>
+             <div class="skeleton-card"></div>
+             <div class="skeleton-card"></div>
+        </div> 
         
+        <div id="mapModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center;" onclick="closeMapModal()">
+            <img id="modalImage" style="max-width:90%; max-height:90%; object-fit:contain;" onclick="event.stopPropagation();">
+            <button onclick="closeMapModal()" style="position:absolute; top:20px; right:30px; font-size:30px; color:white; background:none; border:none; cursor:pointer;">&times;</button>
+        </div>
+
+
         <div class="map-section">
             <h3>🌍 全台天氣實況</h3>
-            <div class="maps-wrapper">
+            <div class="maps-wrapper" id="maps-wrapper">
                 
-                <div class="map-box" style="order: 1;">
+                <div class="map-box" id="map-box-tempMap" data-map-id="tempMap">
                     <h4>🌡️ 溫度分布</h4>
-                    <a id="tempLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg" target="_blank"><img id="tempMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無溫度資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('tempMap', event)">📌</span>
+                    <a id="tempLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg" target="_blank"><img id="tempMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無溫度資料';"></a>
                     <a id="tempBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
                 
-                <div class="map-box" style="order: 2;">
+                <div class="map-box" id="map-box-rainMap" data-map-id="rainMap">
                     <h4>☔ 大間距日累積雨量</h4>
-                    <a id="rainLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg" target="_blank"><img id="rainMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg" target="_blank" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雨量資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('rainMap', event)">📌</span>
+                    <a id="rainLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg" target="_blank"><img id="rainMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg" onclick="openMapModal(this.src)" target="_blank" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雨量資料';"></a>
                     <a id="rainBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
                 
-                <div class="map-box" style="order: 3;"> 
+                <div class="map-box" id="map-box-detailedRainMap" data-map-id="detailedRainMap"> 
                     <h4>🌧️ 小間距日累積雨量</h4>
-                    <a id="detailedRainLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg" target="_blank"><img id="detailedRainMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無精細雨量資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('detailedRainMap', event)">📌</span>
+                    <a id="detailedRainLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg" target="_blank"><img id="detailedRainMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無精細雨量資料';"></a>
                     <a id="detailedRainBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
 
-                <div class="map-box" style="order: 4;">
+                <div class="map-box" id="map-box-infraredMap" data-map-id="infraredMap">
                     <h4>☁️ 紅外線衛星雲圖</h4>
-                    <a id="infraredLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg" target="_blank"><img id="infraredMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無紅外線雲圖資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('infraredMap', event)">📌</span>
+                    <a id="infraredLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg" target="_blank"><img id="infraredMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無紅外線雲圖資料';"></a>
                     <a id="infraredBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
 
-                <div class="map-box" style="order: 5;">
+                <div class="map-box" id="map-box-enhancedInfraredMap" data-map-id="enhancedInfraredMap">
                     <h4>🌟 強化衛星雲圖 (HD)</h4>
-                    <a id="enhancedInfraredLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg" target="_blank"><img id="enhancedInfraredMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無強化雲圖資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('enhancedInfraredMap', event)">📌</span>
+                    <a id="enhancedInfraredLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg" target="_blank"><img id="enhancedInfraredMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無強化雲圖資料';"></a>
                     <a id="enhancedInfraredBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
                 
-                <div class="map-box" style="order: 6;">
+                <div class="map-box" id="map-box-surfaceMap" data-map-id="surfaceMap">
                     <h4>🗺️ 地面天氣圖</h4>
-                    <a id="surfaceLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Forecast/F-C0035-001.jpg" target="_blank"><img id="surfaceMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Forecast/F-C0035-001.jpg" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無天氣圖資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('surfaceMap', event)">📌</span>
+                    <a id="surfaceLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Forecast/F-C0035-001.jpg" target="_blank"><img id="surfaceMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Forecast/F-C0035-001.jpg" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無天氣圖資料';"></a>
                     <a id="surfaceBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Forecast/F-C0035-001.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
                 
-                <div class="map-box" style="order: 7;"> 
+                <div class="map-box" id="map-box-compositeMap" data-map-id="compositeMap"> 
                     <h4>📡 全臺雷達整合圖</h4>
-                    <a id="compositeLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png" target="_blank"><img id="compositeMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無整合雷達資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('compositeMap', event)">📌</span>
+                    <a id="compositeLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png" target="_blank"><img id="compositeMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無整合雷達資料';"></a>
                     <a id="compositeBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
                 
-                <div class="map-box" style="order: 8;"> 
+                <div class="map-box" id="map-box-shulinMap" data-map-id="shulinMap"> 
                     <h4>樹林雷達回波圖</h4>
-                    <a id="shulinLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png" target="_blank"><img id="shulinMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雷達資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('shulinMap', event)">📌</span>
+                    <a id="shulinLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png" target="_blank"><img id="shulinMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雷達資料';"></a>
                     <a id="shulinBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
 
-                <div class="map-box" style="order: 9;">
+                <div class="map-box" id="map-box-nantunMap" data-map-id="nantunMap">
                     <h4>南屯雷達回波圖</h4>
-                    <a id="nantunLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png" target="_blank"><img id="nantunMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雷達資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('nantunMap', event)">📌</span>
+                    <a id="nantunLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png" target="_blank"><img id="nantunMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雷達資料';"></a>
                     <a id="nantunBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
 
-                <div class="map-box" style="order: 10;">
+                <div class="map-box" id="map-box-linyuanMap" data-map-id="linyuanMap">
                     <h4>林園雷達回波圖</h4>
-                    <a id="linyuanLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-003.png" target="_blank"><img id="linyuanMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-003.png" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雷達資料';"></a>
+                    <span class="pin-icon" onclick="togglePinMap('linyuanMap', event)">📌</span>
+                    <a id="linyuanLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-003.png" target="_blank"><img id="linyuanMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-003.png" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無雷達資料';"></a>
                     <a id="linyuanBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-003.png" target="_blank" class="link-btn">🔗 開啟原圖</a>
                 </div>
 
+                 <div class="map-box" id="map-box-globalInfraredMap" data-map-id="globalInfraredMap">
+                    <h4>🌍 全球黑白紅外線雲圖</h4>
+                    <span class="pin-icon" onclick="togglePinMap('globalInfraredMap', event)">📌</span>
+                    <a id="globalInfraredLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0033-001.jpg" target="_blank"><img id="globalInfraredMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0033-001.jpg" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無全球雲圖資料';"></a>
+                    <a id="globalInfraredBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0033-001.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
+                </div>
+
+                <div class="map-box" id="map-box-enhancedGlobalMap" data-map-id="enhancedGlobalMap">
+                    <h4>🌐 高解析全球色調強化雲圖</h4>
+                    <span class="pin-icon" onclick="togglePinMap('enhancedGlobalMap', event)">📌</span>
+                    <a id="enhancedGlobalLink" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-005.jpg" target="_blank"><img id="enhancedGlobalMap" class="map-img" src="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-005.jpg" onclick="openMapModal(this.src)" alt="讀取中..." onerror="this.src='https://via.placeholder.com/600x400?text=無高解析全球雲圖資料';"></a>
+                    <a id="enhancedGlobalBtn" href="https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-005.jpg" target="_blank" class="link-btn">🔗 開啟原圖</a>
+                </div>
             </div>
         </div>
 
@@ -368,83 +496,179 @@
             ⚠️ 備註：各縣市預報係以各縣市政府所在地附近為預報參考位置。
         </div>
     </div>
+    
+    <div id="featuresModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; justify-content:center; align-items:center;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeFeaturesModal()">&times;</span>
+            <div id="lockedFeatures">
+                <h3>✨ WEI天氣 應用程式功能一覽 ✨</h3>
+                
+                <h4>📋 核心預報與資訊</h4>
+                <ul>
+                    <li>多日預報卡片：顯示所選縣市未來 3 個預報時段的資訊。</li>
+                    <li>舒適度提示：根據預報溫差自動給出「寒冷」、「舒適」、「悶熱」等顏色提示。</li>
+                    <li>延伸資訊：預報卡片額外顯示體感溫度、相對濕度，提供更全面的參考。</li>
+                    <li>時間與曆法：顯示即時時鐘、國曆/農曆日期，以及準確的跨年倒數計時。</li>
+                    <li>資料發布時間：顯示氣象數據的最後發布時間，確保資訊即時性。</li>
+                </ul>
+
+                <h4>🚨 警報與防災</h4>
+                <ul>
+                    <li>氣象特報滾動條：實時獲取並顯示 CWA 發布的各種氣象特報（低溫、大雨、強風等），點擊可查看詳情。</li>
+                    <li>即時地震速報：實時獲取 CWA 最新有感地震報告，以顯眼紅色警示條呈現，顯示震級、深度和最大震度地區。</li>
+                    <li>颱風連結：若有颱風警報，警報詳情中會動態顯示颱風路徑圖連結。</li>
+                </ul>
+
+                <h4>🗺️ 地圖與工具</h4>
+                <ul>
+                    <li>12 張實況地圖：包含溫度、雨量、雷達回波、各種衛星雲圖等 12 種 CWA 實況圖。</li>
+                    <li>地圖釘選功能：可釘選 4 張最常用地圖到列表頂部，方便快速存取。</li>
+                    <li>地圖放大預覽：點擊地圖圖片即可開啟全屏預覽 Modal。</li>
+                    <li>主題切換：支援日間/夜間模式一鍵切換，並提供四種主題顏色自訂。</li>
+                    <li>自動定位 (按鈕)：點擊「自動定位」按鈕，可使用瀏覽器定位最近縣市。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
 
     <script>
+        // 🌟 輔助函數：日期格式化
+        const formatTime = (isoString) => {
+            if (!isoString) return '--';
+            const date = new Date(isoString);
+            return `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        };
+
+
         let weatherReportText = "";
-        let currentWxStatus = "";    
         let clockInterval;
         let activeWarningData = [];    
+        let pinnedMaps = []; 
 
         // 🚨 API Key
         const apiKey = 'CWA-F34E2B5F-6154-4EBF-987B-9E10BE9C365C';    
 
         const cityCoords = {
-            "臺北市": {lat: 25.0329, lon: 121.5654}, "基隆市": {lat: 25.1276, lon: 121.7391},
-            "新北市": {lat: 25.0169, lon: 121.4627}, "宜蘭縣": {lat: 24.7021, lon: 121.7377},
-            "桃園市": {lat: 24.9936, lon: 121.3009}, "新竹市": {lat: 24.8138, lon: 120.9674},
-            "新竹縣": {lat: 24.8396, lon: 121.0180}, "苗栗縣": {lat: 24.5601, lon: 120.8214},
-            "臺中市": {lat: 24.1477, lon: 120.6736}, "彰化縣": {lat: 24.0517, lon: 120.5160},
-            "南投縣": {lat: 23.9609, lon: 120.6951}, "雲林縣": {lat: 23.7092, lon: 120.4313},
-            "嘉義市": {lat: 23.4800, lon: 120.4491}, "嘉義縣": {lat: 23.4518, lon: 120.2554},
-            "臺南市": {lat: 22.9997, lon: 120.2270}, "高雄市": {lat: 22.6272, lon: 120.3014},
-            "屏東縣": {lat: 22.5519, lon: 120.5487}, "臺東縣": {lat: 22.7972, lon: 121.0713},
-            "花蓮縣": {lat: 23.9871, lon: 121.6015}, "澎湖縣": {lat: 23.5711, lon: 119.5793},
-            "金門縣": {lat: 24.3293, lon: 118.3204}, "連江縣": {lat: 26.1512, lon: 119.9288}
+            "臺北市": {lat: 25.0329, lon: 121.5654, CWA_ID: '63'}, "基隆市": {lat: 25.1276, lon: 121.7391, CWA_ID: '67'},
+            "新北市": {lat: 25.0169, lon: 121.4627, CWA_ID: '65'}, "宜蘭縣": {lat: 24.7021, lon: 121.7377, CWA_ID: '10002'},
+            "桃園市": {lat: 24.9936, lon: 121.3009, CWA_ID: '68'}, "新竹市": {lat: 24.8138, lon: 120.9674, CWA_ID: '10018'},
+            "新竹縣": {lat: 24.8396, lon: 121.0180, CWA_ID: '10004'}, "苗栗縣": {lat: 24.5601, lon: 120.8214, CWA_ID: '10005'},
+            "臺中市": {lat: 24.1477, lon: 120.6736, CWA_ID: '66'}, "彰化縣": {lat: 24.0517, lon: 120.5160, CWA_ID: '10007'},
+            "南投縣": {lat: 23.9609, lon: 120.6951, CWA_ID: '10008'}, "雲林縣": {lat: 23.7092, lon: 120.4313, CWA_ID: '10009'},
+            "嘉義市": {lat: 23.4800, lon: 120.4491, CWA_ID: '10020'}, "嘉義縣": {lat: 23.4518, lon: 120.2554, CWA_ID: '10010'},
+            "臺南市": {lat: 22.9997, lon: 120.2270, CWA_ID: '69'}, "高雄市": {lat: 22.6272, lon: 120.3014, CWA_ID: '64'},
+            "屏東縣": {lat: 22.5519, lon: 120.5487, CWA_ID: '10013'}, "臺東縣": {lat: 22.7972, lon: 121.0713, CWA_ID: '10014'},
+            "花蓮縣": {lat: 23.9871, lon: 121.6015, CWA_ID: '10015'}, "澎湖縣": {lat: 23.5711, lon: 119.5793, CWA_ID: '10016'},
+            "金門縣": {lat: 24.3293, lon: 118.3204, CWA_ID: '09020'}, "連江縣": {lat: 26.1512, lon: 119.9288, CWA_ID: '09007'}
         };
 
-        const sampleDetailedRainMapData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg" } } } };
-        const sampleInfraredMapData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg" } } } };
-        const sampleEnhancedInfraredMapData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg" } } } }; 
-        const sampleSurfaceMapData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Forecast/F-C0035-001.jpg" } } } };
-        const sampleCompositeRadarData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png" } } } }; 
-        const sampleNantunRadarData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png" } } } };
-        const sampleShulinRadarData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png" } } } };
-        const sampleLinyuanRadarData = { "cwaopendata": { "Dataset": { "Resource": { "ProductURL": "https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-003.png" } } } };
+        // 🌟 核心 API 封裝函數 (優化點 7)
+        async function fetchCWAData(dataid, params = {}) {
+            const queryString = new URLSearchParams({
+                Authorization: apiKey,
+                format: 'JSON',
+                ...params
+            }).toString();
+            const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/${dataid}?${queryString}`;
 
-
-        function updateSurfaceMap(data) {
-            const url = data.cwaopendata.Dataset.Resource.ProductURL + '?t=' + new Date().getTime(); 
-            document.getElementById('surfaceMap').src = url;
-            document.getElementById('surfaceLink').href = url;
-            document.getElementById('surfaceBtn').href = url;
-        }
-
-        function updateRadarMap(data, imgId, linkId, btnId) {
-            const url = data.cwaopendata.Dataset.Resource.ProductURL + '?t=' + new Date().getTime(); 
-            document.getElementById(imgId).src = url;
-            document.getElementById(linkId).href = url;
-            document.getElementById(btnId).href = url;
-        }
-        
-        function updateCompositeRadarMap(data) {
-            const url = data.cwaopendata.Dataset.Resource.ProductURL + '?t=' + new Date().getTime(); 
-            document.getElementById('compositeMap').src = url;
-            document.getElementById('compositeLink').href = url;
-            document.getElementById('compositeBtn').href = url;
-        }
-        
-        function updateInfraredMap(data) {
-            const url = data.cwaopendata.Dataset.Resource.ProductURL + '?t=' + new Date().getTime(); 
-            document.getElementById('infraredMap').src = url;
-            document.getElementById('infraredLink').href = url;
-            document.getElementById('infraredBtn').href = url;
-        }
-        
-        function updateDetailedRainMap(data) {
-            const url = data.cwaopendata.Dataset.Resource.ProductURL + '?t=' + new Date().getTime(); 
-            document.getElementById('detailedRainMap').src = url;
-            document.getElementById('detailedRainLink').href = url;
-            document.getElementById('detailedRainBtn').href = url;
-        }
-        
-        function updateEnhancedInfraredMap(data) {
-            const url = data.cwaopendata.Dataset.Resource.ProductURL + '?t=' + new Date().getTime(); 
-            document.getElementById('enhancedInfraredMap').src = url;
-            document.getElementById('enhancedInfraredLink').href = url;
-            document.getElementById('enhancedInfraredBtn').href = url;
+            try {
+                const response = await fetch(url);
+                if (response.type === 'opaque' || response.status === 0 || response.status === 408) {
+                    throw new Error("網路連線錯誤 (CORS/Timeout)。");
+                }
+                if (!response.ok) {
+                    if (response.status === 401) throw new Error("API Key 無效或過期");
+                    throw new Error(`服務錯誤: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error(`Fetch API ${dataid} 失敗:`, error);
+                throw error;
+            }
         }
 
+        // 🌟 自動定位 (優化點 20) - 函數保留，由按鈕觸發
+        function autoLocate() {
+            if (!navigator.geolocation) {
+                alert("抱歉，您的瀏覽器不支持地理位置定位。請手動選擇縣市。");
+                return;
+            }
+            document.getElementById('greetingText').innerText = "📍 正在嘗試自動定位...";
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    let nearestCity = null;
+                    let minDistance = Infinity;
+
+                    for (const city in cityCoords) {
+                        const cityLat = cityCoords[city].lat;
+                        const cityLon = cityCoords[city].lon;
+                        // 簡單的歐幾里得距離平方
+                        const distanceSq = Math.pow(lat - cityLat, 2) + Math.pow(lon - cityLon, 2);
+                        if (distanceSq < minDistance) {
+                            minDistance = distanceSq;
+                            nearestCity = city;
+                        }
+                    }
+
+                    if (nearestCity) {
+                        document.getElementById('citySelect').value = nearestCity;
+                        getWeather(nearestCity);
+                        alert(`✅ 定位成功！目前位於：${nearestCity}`);
+                        localStorage.setItem('myWeatherCity', nearestCity); 
+                    } else {
+                        alert("⚠️ 無法找到最近的縣市。請手動選擇。");
+                    }
+                },
+                (error) => {
+                    console.error("定位失敗:", error);
+                    alert("定位失敗或您拒絕了位置請求。請手動選擇縣市。");
+                    getWeather(document.getElementById('citySelect').value); 
+                },
+                { enableHighAccuracy: false, timeout: 5000, maximumAge: 0 }
+            );
+        }
+
+        // 🌟 地圖放大預覽 (優化點 3)
+        function openMapModal(src) {
+            const modal = document.getElementById('mapModal');
+            document.getElementById('modalImage').src = src;
+            modal.style.display = 'flex';
+        }
+        function closeMapModal() {
+            document.getElementById('mapModal').style.display = 'none';
+            document.getElementById('modalImage').src = '';
+        }
+
+        // 🌟 網站功能介紹 Modal 
+        function openFeaturesModal() {
+            // 由於內容已鎖定在 HTML 結構中，只需顯示即可
+            document.getElementById('featuresModal').style.display = 'flex';
+        }
+
+        function closeFeaturesModal() {
+            document.getElementById('featuresModal').style.display = 'none';
+        }
+
+
+        function refreshMaps() {
+            // 載入地圖和雷達圖（圖片）
+            const now = new Date().getTime();
+            document.getElementById('tempMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg?t=${now}`;
+            document.getElementById('rainMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg?t=${now}`;
+            document.getElementById('detailedRainMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-002.jpg?t=${now}`;
+            document.getElementById('infraredMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0028-003.jpg?t=${now}`;
+            document.getElementById('enhancedInfraredMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-006.jpg?t=${now}`;
+            document.getElementById('surfaceMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Forecast/F-C0035-001.jpg?t=${now}`;
+            document.getElementById('compositeMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0058-003.png?t=${now}`;
+            document.getElementById('shulinMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-001.png?t=${now}`;
+            document.getElementById('nantunMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-002.png?t=${now}`;
+            document.getElementById('linyuanMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0084-003.png?t=${now}`;
+            document.getElementById('globalInfraredMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-B0033-001.jpg?t=${now}`;
+            document.getElementById('enhancedGlobalMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-C0042-005.jpg?t=${now}`; 
+        }
 
         function toggleAlertDetails() {
             const marquee = document.getElementById('alert-marquee');
@@ -454,10 +678,16 @@
             if (currentState === 'summary' && activeWarningData.length > 0) {
                 let detailHtml = activeWarningData.map(alert => {
                     const formattedContent = alert.content.replace(/。/g, '。<br>');
+                    let typhoonLink = '';
+                    if (alert.title.includes('颱風')) { 
+                        typhoonLink = `<a href="https://www.cwa.gov.tw/V8/C/P/Typhoon/TY_PASS.html" target="_blank" class="typhoon-link">查看颱風路徑圖 &raquo;</a>`;
+                    }
+
                     return `<div class="alert-item">
                         <span class="alert-item-title">${alert.title}</span>
                         <span style="font-size:0.8em; color:#bbb;">發布時間: ${alert.time}</span><br>
                         <span class="alert-item-content">${formattedContent}</span>
+                        ${typhoonLink}
                     </div>`;
                 }).join('');
                 
@@ -470,99 +700,231 @@
             }
         }
 
-        async function getWeather() {
-            const citySelect = document.getElementById('citySelect');
-            if (!citySelect.value) citySelect.value = "臺北市";
-            const city = citySelect.value;
-            const container = document.getElementById('forecast-container');
-            const loader = document.getElementById('loader');
+        function togglePinMap(mapId, event) {
+            if (event) event.stopPropagation();
 
-            container.innerHTML = '';
-            loader.style.display = 'block';
-            container.innerHTML = '<p>正在獲取最新縣市預報...</p>';
-            weatherReportText = `📅 ${city} 天氣預報：\n`;    
+            const mapBox = document.getElementById(`map-box-${mapId}`);
+            const isPinned = mapBox.classList.contains('pinned');
 
-            updateAstroInfo(city);
+            if (isPinned) {
+                mapBox.classList.remove('pinned');
+                pinnedMaps = pinnedMaps.filter(id => id !== mapId);
+                alert(`${mapBox.querySelector('h4').textContent.replace(/.* /,'')} 已取消置頂，將回到原始位置。`);
+            } else {
+                if (pinnedMaps.length >= 4) {
+                    alert('最多只能釘選 4 張地圖，請先取消釘選其他地圖。');
+                    return;
+                }
+                
+                mapBox.classList.add('pinned');
+                pinnedMaps.push(mapId);
+                alert(`${mapBox.querySelector('h4').textContent.replace(/.* /,'')} 已置頂！`);
+            }
+
+            localStorage.setItem('pinnedMaps', JSON.stringify(pinnedMaps));
+            reorderMaps();
+        }
+
+        function reorderMaps() {
+            const wrapper = document.getElementById('maps-wrapper');
+            const allMaps = Array.from(wrapper.querySelectorAll('.map-box'));
             
-            // 載入地圖和雷達圖（圖片）
-            document.getElementById('tempMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg?t=${new Date().getTime()}`;
-            document.getElementById('rainMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg?t=${new Date().getTime()}`;
-            updateDetailedRainMap(sampleDetailedRainMapData); 
-            updateInfraredMap(sampleInfraredMapData); 
-            updateEnhancedInfraredMap(sampleEnhancedInfraredMapData); 
-            updateSurfaceMap(sampleSurfaceMapData);    
-            updateCompositeRadarMap(sampleCompositeRadarData); 
-            updateRadarMap(sampleShulinRadarData, 'shulinMap', 'shulinLink', 'shulinBtn');
-            updateRadarMap(sampleNantunRadarData, 'nantunMap', 'nantunLink', 'nantunBtn');
-            updateRadarMap(sampleLinyuanRadarData, 'linyuanMap', 'linyuanLink', 'linyuanBtn');
+            const originalOrderIds = [
+                'tempMap', 'rainMap', 'detailedRainMap', 'infraredMap', 
+                'enhancedInfraredMap', 'surfaceMap', 'compositeMap', 
+                'shulinMap', 'nantunMap', 'linyuanMap', 'globalInfraredMap', 'enhancedGlobalMap' 
+            ];
+            
+            allMaps.forEach(map => wrapper.removeChild(map));
 
-            checkWarnings();    
+            const pinnedMapElements = [];
+            const unpinnedMapElements = [];
+            
+            allMaps.forEach(map => {
+                const mapId = map.getAttribute('data-map-id');
+                if (pinnedMaps.includes(mapId)) {
+                    map.classList.add('pinned');
+                    pinnedMapElements.push(map);
+                } else {
+                    map.classList.remove('pinned');
+                    unpinnedMapElements.push(map);
+                }
+            });
 
-            const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${apiKey}&locationName=${city}`;
+            unpinnedMapElements.sort((a, b) => {
+                return originalOrderIds.indexOf(a.getAttribute('data-map-id')) - originalOrderIds.indexOf(b.getAttribute('data-map-id'));
+            });
+            
+            pinnedMapElements.sort((a, b) => {
+                return pinnedMaps.indexOf(a.getAttribute('data-map-id')) - pinnedMaps.indexOf(b.getAttribute('data-map-id'));
+            });
+
+            pinnedMapElements.forEach(map => wrapper.appendChild(map));
+            unpinnedMapElements.forEach(map => wrapper.appendChild(map));
+        }
+
+        async function checkEarthquakeAlert() {
+            const earthquakeAlertDiv = document.getElementById('earthquake-alert');
+            const earthquakeDetailsDiv = document.getElementById('earthquake-details');
+            
+            const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0016-001?Authorization=${apiKey}&format=JSON`;
+
+            earthquakeAlertDiv.classList.add('diag');
+            earthquakeAlertDiv.style.display = 'block';
+            earthquakeDetailsDiv.innerHTML = `<h4>🚨 地震報告</h4>正在嘗試獲取地震速報數據...`;
 
             try {
-                const response = await fetch(url);
-                
-                // 檢查是否為 CORS 錯誤 (即無法訪問資源)
-                if (response.type === 'opaque' || response.status === 0 || response.status === 408) {
-                    throw new Error("跨域或服務連線錯誤。請確認您已啟用瀏覽器 CORS 擴充功能！");
-                }
+                const data = await fetchCWAData('E-A0016-001'); 
+                const latest = data.records?.Earthquake?.[0];
 
-                if (!response.ok) {
-                    if (response.status === 401) throw new Error("API Key 無效或過期");
-                    throw new Error(`網路或服務錯誤: ${response.status}`);
-                }
-                
-                const data = await response.json();
-
-                if (data.success === "true") {
-                    loader.style.display = 'none';
-                    const locationData = data.records.location[0];
-                    const weatherElements = locationData.weatherElement;
-                    currentWxStatus = weatherElements.find(el => el.elementName === 'Wx').time[0].parameter.parameterName;
+                if (latest) {
+                    earthquakeAlertDiv.classList.remove('diag'); 
+                    const originTime = latest.EarthquakeInfo?.OriginTime; 
+                    const time = originTime ? originTime.substring(5, 16) : '未知時間';
+                    const magnitude = latest.EarthquakeInfo?.EarthquakeMagnitude?.MagnitudeValue || 'N/A';
+                    const depth = latest.EarthquakeInfo?.FocalDepth || 'N/A';
+                    const location = latest.EarthquakeInfo?.Epicenter?.Location || '未知地點';
                     
-                    container.innerHTML = '';
+                    let maxIntensityInfo = '未達顯著震度';
                     
-                    for (let i = 0; i < 3; i++) {
-                        const startTimeStr = weatherElements[0].time[i].startTime;
-                        const endTimeStr = weatherElements[0].time[i].endTime;
-                        const wx = weatherElements.find(el => el.elementName === 'Wx').time[i].parameter.parameterName;
-                        const pop = weatherElements.find(el => el.elementName === 'PoP').time[i].parameter.parameterName;
-                        const minT = weatherElements.find(el => el.elementName === 'MinT').time[i].parameter.parameterName;
-                        const maxT = weatherElements.find(el => el.elementName === 'MaxT').time[i].parameter.parameterName;
-                        const comfortData = getCustomComfort(minT, maxT);
+                    const shakingArea = latest.Intensity?.ShakingArea;
 
-                        let icon = '☁️';
-                        if (wx.includes('雷')) icon = '⛈️';
-                        else if (wx.includes('雨')) icon = '🌧️';
-                        else if (wx.includes('晴')) icon = '☀️';
-                        else if (wx.includes('陰') || wx.includes('雲')) icon = '☁️';
+                    if (shakingArea && shakingArea.length > 0) {
+                        const maxArea = shakingArea.reduce((max, area) => {
+                            const currentIntensity = parseFloat(area.AreaIntensity.replace('級', '')) || 0;
+                            const maxIntensityVal = max.AreaIntensity ? parseFloat(max.AreaIntensity.replace('級', '')) : 0;
+                            if (currentIntensity > maxIntensityVal) return area;
+                            return max;
+                        }, { AreaIntensity: '0級', CountyName: '' });
 
-                        const timeString = `${startTimeStr.substring(5, 16)} <br>~<br> ${endTimeStr.substring(5, 16)}`;
-                        const copyTime = `${startTimeStr.substring(5, 10)} ${startTimeStr.substring(11, 13)}時`;
-
-                        container.innerHTML += `
-                            <div class="weather-card">
-                                <div class="time-title">${timeString}</div>
-                                <div class="icon">${icon}</div>
-                                <div class="status">${wx}</div>
-                                <div class="ci-text" style="background:${comfortData.color};">${comfortData.text}</div>
-                                <div class="temp-range">${minT}° - ${maxT}°C</div>
-                                <div class="rain">☔ 降雨率：${pop}%</div>
-                            </div>
-                        `;
-                        weatherReportText += `\n⏰ ${copyTime} 起：\n${icon} ${wx} / 🌡️${minT}-${maxT}°C / ☔${pop}%`;
+                        if (maxArea.AreaIntensity !== '0級') {
+                            if (maxArea.AreaDesc.startsWith('最大震度')) {
+                                maxIntensityInfo = maxArea.AreaIntensity;
+                            } else {
+                                if (!maxArea.CountyName) {
+                                    maxIntensityInfo = latest.ReportContent.match(/最大震度[^。]+/)?.[0] || maxArea.AreaIntensity;
+                                } else {
+                                    maxIntensityInfo = `${maxArea.CountyName} ${maxArea.AreaIntensity}`;
+                                }
+                            }
+                        }
                     }
-                    saveLocation();
+
+                    const html = `
+                        <div style="display:flex; align-items:center; flex-wrap: wrap; justify-content: space-between; width: 100%;">
+                            <div style="display: flex; align-items: center; flex-basis: 50%; min-width: 150px;">
+                                <span class="earthquake-magnitude">M${magnitude}</span>
+                                <div style="flex-direction: column; text-align: left; line-height: 1.2;">
+                                    <div style="font-size: 1em; font-weight: bold;">最大震度: ${maxIntensityInfo}</div>
+                                    <div style="font-size: 0.8em; font-weight: normal;">深度 ${depth} km</div>
+                                </div>
+                            </div>
+                            <div style="flex-basis: 45%; text-align: right; line-height: 1.2; padding-top: 5px;">
+                                <div>發震時間: ${time}</div>
+                                <div>震央: ${location}</div>
+                            </div>
+                        </div>
+                    `;
+                    earthquakeDetailsDiv.innerHTML = `<h4>🚨 地震報告</h4>` + html;
+                    earthquakeAlertDiv.style.display = 'block';
+
                 } else {
-                    loader.style.display = 'none';
-                    container.innerHTML = '<p>讀取失敗</p>';
+                    earthquakeAlertDiv.classList.add('diag'); 
+                    earthquakeDetailsDiv.innerHTML = `<h4>✅ 系統狀態</h4>數據流正常，目前無最新有感地震速報。`;
+                    earthquakeAlertDiv.style.display = 'block';
                 }
+
+            } catch (error) {
+                console.error('地震報告讀取失敗:', error);
+                earthquakeAlertDiv.classList.add('diag');
+                earthquakeAlertDiv.style.background = '#d63031'; 
+                earthquakeDetailsDiv.innerHTML = `<h4>❌ 錯誤</h4>無法獲取最新地震報告。請檢查網路或 CORS。`;
+                earthquakeAlertDiv.style.display = 'block';
+            }
+        }
+
+
+        async function getWeather(city) {
+            const container = document.getElementById('forecast-container');
+            const loader = document.getElementById('loader');
+            const updatedTimeEl = document.getElementById('updatedTime');
+
+            container.innerHTML = '<div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>'; // 🌟 載入骨架屏
+            loader.style.display = 'block';
+            updatedTimeEl.innerText = '讀取數據中...';
+            
+            let weatherReportText = `📅 ${city} 天氣預報：\n`;
+            
+            updateAstroInfo(city);
+            
+            try {
+                // F-C0032-001 (縣市 36 小時預報)
+                const data = await fetchCWAData('F-C0032-001', { locationName: city });
+                
+                // 🌟 健壯性：使用可選鏈來確保 safe access
+                const locationData = data.records?.location?.[0]; 
+                const issuedTime = data.records?.datasetInfo?.issueTime; 
+
+                if (!locationData) {
+                     throw new Error("無法獲取預報資料，API 返回結構異常。");
+                }
+
+                updatedTimeEl.innerText = `資料發布時間: ${formatTime(issuedTime)} (CWA)`; 
+                
+                const weatherElements = locationData.weatherElement;
+                
+                container.innerHTML = '';
+                
+                // 體感溫度 (AT), 相對濕度 (RH) 數據準備
+                const rhElement = weatherElements.find(el => el.elementName === 'RH');
+                const atElement = weatherElements.find(el => el.elementName === 'AT');
+
+                for (let i = 0; i < 3; i++) {
+                    const startTimeStr = weatherElements.find(el => el.elementName === 'Wx').time[i].startTime;
+                    const endTimeStr = weatherElements.find(el => el.elementName === 'Wx').time[i].endTime;
+                    const wx = weatherElements.find(el => el.elementName === 'Wx').time[i].parameter.parameterName;
+                    const pop = Math.round(weatherElements.find(el => el.elementName === 'PoP').time[i].parameter.parameterName); 
+                    const minT = Math.round(weatherElements.find(el => el.elementName === 'MinT').time[i].parameter.parameterName);
+                    const maxT = Math.round(weatherElements.find(el => el.elementName === 'MaxT').time[i].parameter.parameterName);
+                    const comfortData = getCustomComfort(minT, maxT);
+                    
+                    const rh = rhElement?.time[i]?.parameter?.parameterName ? Math.round(rhElement.time[i].parameter.parameterName) : '--'; // 🌟 健壯性：使用可選鏈
+                    const at = atElement?.time[i]?.parameter?.parameterName ? Math.round(atElement.time[i].parameter.parameterName) : '--'; // 🌟 健壯性：使用可選鏈
+
+                    let icon = '☁️';
+                    if (wx.includes('雷')) icon = '⛈️';
+                    else if (wx.includes('雨')) icon = '🌧️';
+                    else if (wx.includes('晴')) icon = '☀️';
+                    else if (wx.includes('陰') || wx.includes('雲')) icon = '☁️';
+
+                    const timeString = `${startTimeStr.substring(5, 16)} <br>~<br> ${endTimeStr.substring(5, 16)}`;
+                    const copyTime = `${startTimeStr.substring(5, 10)} ${startTimeStr.substring(11, 13)}時`;
+
+                    container.innerHTML += `
+                        <div class="weather-card">
+                            <div class="time-title">${timeString}</div>
+                            <div class="icon">${icon}</div>
+                            <div class="status">${wx}</div>
+                            <div class="ci-text" style="background:${comfortData.color};">${comfortData.text}</div>
+                            <div class="temp-range">${minT}° - ${maxT}°C</div>
+                            <div class="rain">☔ 降雨率：${pop}%</div>
+                            <div class="details-row">體感：${at}°C | 濕度：${rh}%</div> 
+                        </div>
+                    `;
+                    weatherReportText += `\n⏰ ${copyTime} 起：\n${icon} ${wx} / 🌡️${minT}-${maxT}°C / 體感${at}°C / 濕度${rh}% / ☔${pop}%`;
+                }
+                localStorage.setItem('myWeatherCity', city); 
+
             } catch (error) {
                 console.error(error);
-                loader.style.display = 'none';
-                let errorMessage = error.message.includes('跨域') ? error.message : `API 請求失敗，原因：${error.message}`;
-                container.innerHTML = `<div style="color:red; font-weight:bold; background:#ffe6e6; padding:15px; border-radius:10px;">❌ 錯誤：天氣資料無法讀取。<br>原因：${errorMessage}<br>💡 **提示：請確保您已安裝並啟用瀏覽器 CORS 擴充功能！**</div></div>`;
+                let errorMessage = error.message.includes('跨域') ? "跨域錯誤！請啟用瀏覽器 CORS 擴充功能。" : `API 請求失敗：${error.message}`;
+                container.innerHTML = `<div style="color:red; font-weight:bold; background:#ffe6e6; padding:15px; border-radius:10px;">❌ 錯誤：天氣資料無法讀取。<br>原因：${errorMessage}</div>`;
+                updatedTimeEl.innerText = '';
+            } finally {
+                 loader.style.display = 'none';
+                 refreshMaps(); 
+                 checkEarthquakeAlert();
+                 checkWarnings();
             }
         }
 
@@ -571,23 +933,14 @@
             const marquee = document.getElementById('alert-marquee');
             const marqueeText = document.getElementById('marqueeText');
             
-            const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/W-C0033-002?Authorization=${apiKey}&format=JSON`;
-            
             try {
-                const res = await fetch(url);
-
-                // 檢查是否為 CORS 錯誤 (即無法訪問資源)
-                if (res.type === 'opaque' || res.status === 0 || res.status === 408) {
-                    throw new Error("跨域或服務連線錯誤。請確認您已啟用瀏覽器 CORS 擴充功能！");
-                }
-
-                const data = await res.json();
+                const data = await fetchCWAData('W-C0033-002'); 
                 
-                if (data.success === "true" && data.records.record.length > 0) {
+                if (data.records.record.length > 0) {
                     activeWarningData = [];    
                     
                     data.records.record.forEach(item => {
-                        const content = item.contents.content.contentText || '';
+                        const content = item.contents?.content?.contentText || ''; 
                         
                         if (content.trim() !== '' && !content.includes('解除')) {
                             const title = item.datasetInfo.datasetDescription;    
@@ -603,20 +956,16 @@
                     if (activeWarningData.length > 0) {
                         
                         // --- 動態警報分級與摘要邏輯 ---
-                        const isSevere = activeWarningData.some(a => 
-                            a.title.includes('颱風') || a.title.includes('地震') || 
-                            a.content.includes('豪雨') || a.content.includes('大豪雨') || a.content.includes('超大豪雨')
-                        );
-
+                        const isTyphoon = activeWarningData.some(a => a.title.includes('颱風'));
+                        const isSevere = activeWarningData.some(a => isTyphoon || a.content.includes('豪雨') || a.content.includes('超大豪雨'));
                         const isRain = activeWarningData.some(a => a.content.includes('大雨'));
                         const isCold = activeWarningData.some(a => a.content.includes('低溫特報'));
                         const isWind = activeWarningData.some(a => a.content.includes('大風') || a.title.includes('強風'));
-                        const isFog = activeWarningData.some(a => a.content.includes('濃霧') || a.title.includes('濃霧'));
+                        const isFog = activeWarningData.some(a => a.content.includes('濃霧'));
                         
-                        const isWarning = isRain || isCold || isWind || isFog;
-
                         let activeTypes = [];
-                        if (isRain) activeTypes.push('大雨');
+                        if (isTyphoon) activeTypes.push('颱風');
+                        if (isRain && !isSevere) activeTypes.push('大雨');
                         if (isCold) activeTypes.push('低溫');
                         if (isWind) activeTypes.push('強風');
                         if (isFog) activeTypes.push('濃霧');
@@ -625,21 +974,18 @@
 
 
                         let summaryText;
-                        let alertClass = 'alert-bg-default';
                         
                         if (isSevere) {
-                            alertClass = 'alert-bg-severe';
-                            summaryText = `🔴 重大警報：颱風/豪雨等 ${activeWarningData.length} 則 (資料來源: CWA)，點擊查看詳情！`;
-                        } else if (isWarning) {
-                            alertClass = 'alert-bg-warning';
+                            summaryText = `🔴 重大警報：${typeText}等 ${activeWarningData.length} 則 (資料來源: CWA)，點擊查看詳情！`;
+                            marquee.style.backgroundColor = 'var(--severe-color)';
+                        } else if (isRain || isCold || isWind || isFog) {
                             summaryText = `⚠️ 特報：${typeText}等 ${activeWarningData.length} 則 (資料來源: CWA)，點擊查看詳情！`;
+                            marquee.style.backgroundColor = '#d35400'; 
                         } else {
-                            alertClass = 'alert-bg-info'; 
                             summaryText = `🔵 注意：目前有 ${activeWarningData.length} 則天氣特報 (資料來源: CWA)，點擊查看詳情！`;
+                            marquee.style.backgroundColor = 'var(--info-color)';
                         }
-                        // -------------------------------------------------------------
                         
-                        marquee.className = `alert-marquee ${alertClass}`;
                         marqueeText.innerText = summaryText;
                         marquee.style.display = 'block';
                         
@@ -653,9 +999,9 @@
                 console.error('警報讀取失敗，原因：', e);
                 marquee.style.display = 'block';
                 marquee.style.textAlign = 'center';
-                marquee.className = 'alert-marquee alert-bg-info';
-                let errorMessage = e.message.includes('跨域') ? e.message : `API 請求失敗，原因：${e.message}`;
-                marqueeText.innerText = `🚨 警報資訊讀取失敗 (原因: ${errorMessage})`;
+                marquee.style.backgroundColor = 'var(--severe-color)'; 
+                let errorMessage = e.message.includes('跨域') ? "跨域錯誤！請啟用瀏覽器 CORS 擴充功能。" : `網路或 API 故障。`;
+                marqueeText.innerText = `❌ 氣象特報讀取失敗：${errorMessage}`;
             }
         }
 
@@ -794,7 +1140,7 @@
         }
 
         window.onload = function() {
-            // 1. 🌟 優先初始化時鐘
+            // 🌟 1. 優先初始化時鐘
             startClock();
             
             // 2. 設置地點
@@ -805,8 +1151,8 @@
             } else {
                 citySelectEl.value = "臺北市";
             }
-
-            // 3. 設置主題
+            
+            // 🌟 3. 設置主題
             const savedColor = localStorage.getItem('themeColor');
             const savedGrad = localStorage.getItem('themeGradient');
             const savedTheme = localStorage.getItem('theme');
@@ -828,24 +1174,27 @@
                 document.querySelector('.theme-blue').classList.add('active');
             }
 
-            // 4. 🌟 立即開始查詢 (確保網站載入後自動觸發)
-            getWeather();
+            // 🌟 4. 初始化地圖釘選狀態並排序
+            const savedPins = localStorage.getItem('pinnedMaps');
+            if (savedPins) {
+                try {
+                    pinnedMaps = JSON.parse(savedPins);
+                } catch(e) {
+                    console.error("Failed to parse pinnedMaps from localStorage:", e);
+                    pinnedMaps = [];
+                }
+            }
+            reorderMaps(); // 根據儲存的狀態進行第一次排序
+
+            // 🌟 5. 立即開始查詢 
+            getWeather(citySelectEl.value);
             
-            // 5. 定期更新地圖、警報（每 5 分鐘）
+            // 🌟 6. 定期更新地圖、警報 (3分鐘)
             setInterval(function() {
                 checkWarnings();
-                
-                document.getElementById('tempMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0038-001.jpg?t=${new Date().getTime()}`;
-                document.getElementById('rainMap').src = `https://cwaopendata.s3.ap-northeast-1.amazonaws.com/Observation/O-A0040-001.jpg?t=${new Date().getTime()}`;
-                updateDetailedRainMap(sampleDetailedRainMapData); 
-                updateInfraredMap(sampleInfraredMapData); 
-                updateEnhancedInfraredMap(sampleEnhancedInfraredMapData); 
-                updateSurfaceMap(sampleSurfaceMapData);
-                updateCompositeRadarMap(sampleCompositeRadarData); 
-                updateRadarMap(sampleShulinRadarData, 'shulinMap', 'shulinLink', 'shulinBtn');
-                updateRadarMap(sampleNantunRadarData, 'nantunMap', 'nantunLink', 'nantunBtn');
-                updateRadarMap(sampleLinyuanRadarData, 'linyuanMap', 'linyuanLink', 'linyuanBtn');
-            }, 300000); // 300000 毫秒 = 5 分鐘
+                checkEarthquakeAlert(); // 定時檢查地震
+                refreshMaps(); // 只刷新地圖圖片
+            }, 180000); // 180000 毫秒 = 3 分鐘
         };
     </script>
 </body>
