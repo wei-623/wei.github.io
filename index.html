@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -275,7 +275,7 @@
         .map-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,.1); text-align: center; }
         body.dark-mode .map-section { border-top: 1px solid rgba(255,255,255,.1); }
         #maps-wrapper {  
-            display: grid;  /* 🌟 恢復 Grid 佈局 */
+            display: grid;  
             grid-template-columns: repeat(4, minmax(200px, 1fr)); 
             justify-content: center;  
             gap: 20px;  
@@ -298,6 +298,7 @@
                 overflow-x: hidden;
             }
         }
+        /* 🌟 RWD 優化：超小螢幕 (500px 以下) 變為單欄 */
         @media (max-width: 500px) {
             #maps-wrapper {
                 grid-template-columns: 1fr; 
@@ -648,7 +649,6 @@
 
         // 🌟 網站功能介紹 Modal 
         function openFeaturesModal() {
-            // 由於內容已鎖定在 HTML 結構中，只需顯示即可
             document.getElementById('featuresModal').style.display = 'flex';
         }
 
@@ -1204,4 +1204,3 @@
 </body>
 
 </html>
-                       
