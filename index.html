@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -275,28 +275,32 @@
         .map-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,.1); text-align: center; }
         body.dark-mode .map-section { border-top: 1px solid rgba(255,255,255,.1); }
         #maps-wrapper {  
-            display: grid;  
+            display: grid;  /* 🌟 恢復 Grid 佈局 */
             grid-template-columns: repeat(4, minmax(200px, 1fr)); 
             justify-content: center;  
             gap: 20px;  
             margin: 0 auto;
-            /* 🌟 RWD 優化：行動版地圖可橫向滾動 */
-            overflow-x: auto;
-            padding-bottom: 10px;
-            white-space: nowrap;
-        }
-        /* 確保行動版地圖在 flex/grid 下能保持尺寸，方便滑動 */
-        .map-box { 
-            position: relative; 
-            min-width: 220px; 
-            display: inline-block; 
+            overflow-x: hidden; /* 確保桌面版不橫向滾動 */
+            padding-bottom: 0;
             white-space: normal;
         }
-        /* 🌟 RWD 優化：小螢幕變為兩欄 */
+        /* 確保地圖盒在 Grid 佈局下正常工作 */
+        .map-box { 
+            position: relative; 
+            min-width: unset; 
+            display: block; 
+            white-space: normal;
+        }
+        /* 🌟 RWD 優化：小螢幕 (800px 以下) 變為兩欄 */
         @media (max-width: 800px) {
              #maps-wrapper {
-                display: flex; /* 切換為 flex 以啟用水平滾動 */
-                flex-wrap: nowrap;
+                grid-template-columns: repeat(2, 1fr);
+                overflow-x: hidden;
+            }
+        }
+        @media (max-width: 500px) {
+            #maps-wrapper {
+                grid-template-columns: 1fr; 
             }
         }
         
@@ -1200,3 +1204,4 @@
 </body>
 
 </html>
+                       
