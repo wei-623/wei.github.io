@@ -274,36 +274,43 @@
         /* Maps Section and Grid Layout */
         .map-section { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,.1); text-align: center; }
         body.dark-mode .map-section { border-top: 1px solid rgba(255,255,255,.1); }
+        
+        /* 🌟 核心修復：使用 Grid 佈局，讓項目水平居中，並確保響應式適應 */
         #maps-wrapper {  
             display: grid;  
-            grid-template-columns: repeat(4, minmax(200px, 1fr)); 
-            justify-content: center;  
+            /* 使用 auto-fit 讓 Grid 項目自動適應並換行 */
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+            /* 讓整個網格容器（如果有剩餘空間）在父元素中居中 */
+            justify-content: center; 
             gap: 20px;  
             margin: 0 auto;
-            overflow-x: hidden; /* 確保桌面版不橫向滾動 */
+            /* 確保在窄螢幕上不會產生強制橫向滾動 */
+            overflow-x: hidden; 
             padding-bottom: 0;
             white-space: normal;
         }
-        /* 確保地圖盒在 Grid 佈局下正常工作 */
+
+        /* 🌟 新增：讓網格內部的子項目（地圖卡片）在其單元格內水平居中 */
         .map-box { 
             position: relative; 
             min-width: unset; 
             display: block; 
             white-space: normal;
+            justify-self: center; /* 讓每個地圖卡片在其網格單元格內水平居中 */
         }
-        /* 🌟 RWD 優化：小螢幕 (800px 以下) 變為兩欄 */
+        
+        /* 媒體查詢：確保在窄螢幕上適應 */
         @media (max-width: 800px) {
              #maps-wrapper {
                 grid-template-columns: repeat(2, 1fr);
-                overflow-x: hidden;
             }
         }
-        /* 🌟 RWD 優化：超小螢幕 (500px 以下) 變為單欄 */
         @media (max-width: 500px) {
             #maps-wrapper {
                 grid-template-columns: 1fr; 
             }
         }
+        /* ---------------------------------- */
         
         .map-box.pinned {
             border: 3px solid var(--pin-color) !important;
