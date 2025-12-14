@@ -187,87 +187,10 @@
 
 
         /* ---------------------------------- */
-        /* 🌟 地震警報區塊樣式 (最終優化版 - 貼合 Marquee 尺寸) 🌟 */
+        /* 🌟 地震警報區塊樣式 (已移除，此樣式僅為占位符) 🌟 */
         /* ---------------------------------- */
         #earthquake-alert {
-            display: none; /* 預設隱藏 */
-            width: 95%;
-            margin: 10px auto 20px auto; 
-            padding: 10px 15px; /* 與 Marquee 保持接近的垂直尺寸 */
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
-            color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(192, 57, 43, 0.4);
-            font-weight: bold;
-            text-align: left;
-            animation: pulse 1.5s infinite;
-            /* 🌟 確保在 RWD 下有最小高度，與 alert-marquee 視覺高度一致 */
-            min-height: 40px; 
-        }
-
-        /* 診斷訊息專用樣式 */
-        #earthquake-alert.diag {
-            background: #2c3e50;
-            color: #ffeb3b;
-            animation: none;
-        }
-
-        /* 恢復閃爍動畫效果 */
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 15px rgba(192, 57, 43, 0.5); }
-            50% { transform: scale(1.005); box-shadow: 0 0 18px rgba(192, 57, 43, 0.8); }
-            100% { transform: scale(1); box-shadow: 0 0 15px rgba(192, 57, 43, 0.5); }
-        }
-
-        #earthquake-alert h4 {
-            margin: 0; 
-            font-size: 1.1em; /* 保持與 Marquee 摘要字體接近 */
-            color: #ffeb3b; 
-            display: inline; 
-            margin-right: 10px;
-            white-space: nowrap; /* 🌟 確保標題不換行 */
-        }
-
-        .earthquake-detail {
-            font-size: 1em; 
-            line-height: 1.4; 
-            display: flex;
-            align-items: center; 
-        }
-        .earthquake-magnitude {
-            font-size: 1.8em; /* 震級 MXX 視覺突出 */
-            color: #fff;
-            margin-right: 15px; 
-            display: inline-block;
-            line-height: 1.1; /* 調整行高讓數字居中 */
-        }
-        /* 佈局容器 */
-        #earthquake-details > div {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap; 
-            width: 100%;
-        }
-        #earthquake-details > div > div {
-            font-size: 0.9em; 
-            line-height: 1.2;
-            margin-right: 8px; 
-        }
-        /* 針對手機版面，讓內容可以垂直堆疊 */
-        @media (max-width: 500px) {
-             #earthquake-details > div {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 5px;
-            }
-            .earthquake-magnitude {
-                margin-bottom: 5px;
-            }
-            #earthquake-details > div > div {
-                text-align: left;
-                margin-left: 0;
-            }
+            display: none; 
         }
         /* ---------------------------------- */
 
@@ -278,25 +201,22 @@
         /* 🌟 核心修復：使用 Grid 佈局，讓項目水平居中，並確保響應式適應 */
         #maps-wrapper {  
             display: grid;  
-            /* 使用 auto-fit 讓 Grid 項目自動適應並換行 */
+            /* 使用 auto-fit 讓 Grid 項目自動適應並換行 (minmax(最小寬度, 彈性寬度)) */
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-            /* 讓整個網格容器（如果有剩餘空間）在父元素中居中 */
-            justify-content: center; 
             gap: 20px;  
-            margin: 0 auto;
-            /* 確保在窄螢幕上不會產生強制橫向滾動 */
+            margin: 0 auto; /* 讓 Grid 容器本身在父元素中居中 */
             overflow-x: hidden; 
             padding-bottom: 0;
             white-space: normal;
         }
 
-        /* 🌟 新增：讓網格內部的子項目（地圖卡片）在其單元格內水平居中 */
+        /* 🌟 修復：讓網格內部的子項目（地圖卡片）在其單元格內水平居中 */
         .map-box { 
             position: relative; 
             min-width: unset; 
             display: block; 
             white-space: normal;
-            justify-self: center; /* 讓每個地圖卡片在其網格單元格內水平居中 */
+            justify-self: center; /* 關鍵屬性：讓子項目居中 */
         }
         
         /* 媒體查詢：確保在窄螢幕上適應 */
@@ -360,11 +280,7 @@
                 </div>
         </div>
         
-        <div id="earthquake-alert" style="display: none;">
-            <div id="earthquake-details" class="earthquake-detail">
-                讀取中...
-            </div>
-        </div>
+        <div id="earthquake-alert" style="display: none;"></div>
         <div class="clock-area">
             <div class="greeting" id="greetingText">Loading...</div>
             <div class="real-time-clock" id="liveClock">00:00:00</div>
@@ -393,7 +309,7 @@
             <button class="btn-query" onclick="getWeather(citySelect.value)">🔄 查詢</button>
             <button class="btn-copy" onclick="copyWeather()">📋 複製</button>
             <button class="btn-mode" onclick="toggleTheme(this)" id="btnMode">🌙 夜間</button>
-            <button class="btn-mode" onclick="openFeaturesModal()">ℹ️ 網站功能</button> <div class="theme-selector" id="themeSelector">
+            <button class="btn-mode" onclick="autoLocate()">📍 自動定位</button> <button class="btn-mode" onclick="openFeaturesModal()">ℹ️ 網站功能</button> <div class="theme-selector" id="themeSelector">
                 <div class="color-btn theme-blue active" data-color="#0984e3" data-gradient="linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)" onclick="toggleTheme(this)"></div>
                 <div class="color-btn theme-green" data-color="#00b894" data-gradient="linear-gradient(135deg, #55efc4 0%, #00b894 100%)" onclick="toggleTheme(this)"></div>
                 <div class="color-btn theme-purple" data-color="#6c5ce7" data-gradient="linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)" onclick="toggleTheme(this)"></div>
@@ -527,7 +443,6 @@
                 <h4>🚨 警報與防災</h4>
                 <ul>
                     <li>氣象特報滾動條：實時獲取並顯示 CWA 發布的各種氣象特報（低溫、大雨、強風等），點擊可查看詳情。</li>
-                    <li>即時地震速報：實時獲取 CWA 最新有感地震報告，以顯眼紅色警示條呈現，顯示震級、深度和最大震度地區。</li>
                     <li>颱風連結：若有颱風警報，警報詳情中會動態顯示颱風路徑圖連結。</li>
                 </ul>
 
@@ -774,84 +689,9 @@
             unpinnedMapElements.forEach(map => wrapper.appendChild(map));
         }
 
+        // 🌟 移除 checkEarthquakeAlert 函數，以取消地震警報功能
         async function checkEarthquakeAlert() {
-            const earthquakeAlertDiv = document.getElementById('earthquake-alert');
-            const earthquakeDetailsDiv = document.getElementById('earthquake-details');
-            
-            const url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/E-A0016-001?Authorization=${apiKey}&format=JSON`;
-
-            earthquakeAlertDiv.classList.add('diag');
-            earthquakeAlertDiv.style.display = 'block';
-            earthquakeDetailsDiv.innerHTML = `<h4>🚨 地震報告</h4>正在嘗試獲取地震速報數據...`;
-
-            try {
-                const data = await fetchCWAData('E-A0016-001'); 
-                const latest = data.records?.Earthquake?.[0];
-
-                if (latest) {
-                    earthquakeAlertDiv.classList.remove('diag'); 
-                    const originTime = latest.EarthquakeInfo?.OriginTime; 
-                    const time = originTime ? originTime.substring(5, 16) : '未知時間';
-                    const magnitude = latest.EarthquakeInfo?.EarthquakeMagnitude?.MagnitudeValue || 'N/A';
-                    const depth = latest.EarthquakeInfo?.FocalDepth || 'N/A';
-                    const location = latest.EarthquakeInfo?.Epicenter?.Location || '未知地點';
-                    
-                    let maxIntensityInfo = '未達顯著震度';
-                    
-                    const shakingArea = latest.Intensity?.ShakingArea;
-
-                    if (shakingArea && shakingArea.length > 0) {
-                        const maxArea = shakingArea.reduce((max, area) => {
-                            const currentIntensity = parseFloat(area.AreaIntensity.replace('級', '')) || 0;
-                            const maxIntensityVal = max.AreaIntensity ? parseFloat(max.AreaIntensity.replace('級', '')) : 0;
-                            if (currentIntensity > maxIntensityVal) return area;
-                            return max;
-                        }, { AreaIntensity: '0級', CountyName: '' });
-
-                        if (maxArea.AreaIntensity !== '0級') {
-                            if (maxArea.AreaDesc.startsWith('最大震度')) {
-                                maxIntensityInfo = maxArea.AreaIntensity;
-                            } else {
-                                if (!maxArea.CountyName) {
-                                    maxIntensityInfo = latest.ReportContent.match(/最大震度[^。]+/)?.[0] || maxArea.AreaIntensity;
-                                } else {
-                                    maxIntensityInfo = `${maxArea.CountyName} ${maxArea.AreaIntensity}`;
-                                }
-                            }
-                        }
-                    }
-
-                    const html = `
-                        <div style="display:flex; align-items:center; flex-wrap: wrap; justify-content: space-between; width: 100%;">
-                            <div style="display: flex; align-items: center; flex-basis: 50%; min-width: 150px;">
-                                <span class="earthquake-magnitude">M${magnitude}</span>
-                                <div style="flex-direction: column; text-align: left; line-height: 1.2;">
-                                    <div style="font-size: 1em; font-weight: bold;">最大震度: ${maxIntensityInfo}</div>
-                                    <div style="font-size: 0.8em; font-weight: normal;">深度 ${depth} km</div>
-                                </div>
-                            </div>
-                            <div style="flex-basis: 45%; text-align: right; line-height: 1.2; padding-top: 5px;">
-                                <div>發震時間: ${time}</div>
-                                <div>震央: ${location}</div>
-                            </div>
-                        </div>
-                    `;
-                    earthquakeDetailsDiv.innerHTML = `<h4>🚨 地震報告</h4>` + html;
-                    earthquakeAlertDiv.style.display = 'block';
-
-                } else {
-                    earthquakeAlertDiv.classList.add('diag'); 
-                    earthquakeDetailsDiv.innerHTML = `<h4>✅ 系統狀態</h4>數據流正常，目前無最新有感地震速報。`;
-                    earthquakeAlertDiv.style.display = 'block';
-                }
-
-            } catch (error) {
-                console.error('地震報告讀取失敗:', error);
-                earthquakeAlertDiv.classList.add('diag');
-                earthquakeAlertDiv.style.background = '#d63031'; 
-                earthquakeDetailsDiv.innerHTML = `<h4>❌ 錯誤</h4>無法獲取最新地震報告。請檢查網路或 CORS。`;
-                earthquakeAlertDiv.style.display = 'block';
-            }
+             return;
         }
 
 
@@ -934,7 +774,6 @@
             } finally {
                  loader.style.display = 'none';
                  refreshMaps(); 
-                 checkEarthquakeAlert();
                  checkWarnings();
             }
         }
@@ -1203,7 +1042,7 @@
             // 🌟 6. 定期更新地圖、警報 (3分鐘)
             setInterval(function() {
                 checkWarnings();
-                checkEarthquakeAlert(); // 定時檢查地震
+                // 🌟 移除了 checkEarthquakeAlert() 
                 refreshMaps(); // 只刷新地圖圖片
             }, 180000); // 180000 毫秒 = 3 分鐘
         };
